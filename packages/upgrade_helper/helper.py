@@ -80,7 +80,7 @@ class UpgradeHelper(DTProcess):
                 # battery found but not in normal mode
                 self.logger.error("Battery detected in 'Boot Mode', but it needs to be in "
                                   "'Normal Mode'. You can switch mode by pressing the button "
-                                  "on the battery.")
+                                  "on the battery ONCE.")
                 return ExitCode.HARDWARE_WRONG_MODE
 
             # we have a device in normal mode, spin battery drivers and wait for info to be read
@@ -138,8 +138,8 @@ class UpgradeHelper(DTProcess):
         if len(boot_devs) <= 0:
             # battery found but not in boot mode
             self.logger.error("Battery detected in 'Normal Mode', but it needs to be in "
-                              "'Boot Mode'. You can switch mode by pressing the button "
-                              "on the battery twice.")
+                              "'Boot Mode'. You can switch mode by DOUBLE pressing the button "
+                              "on the battery.")
             return ExitCode.HARDWARE_WRONG_MODE
         # we have a device in boot mode, try opening connection to it
         try:
@@ -176,7 +176,12 @@ class UpgradeHelper(DTProcess):
             cmd += ["--erase", "--write", "--verify", "--reset", fw_fpath]
         # execute
         self.logger.debug(f"$ {' '.join(cmd)}")
-        subprocess.check_call(cmd)
+        try:
+            subprocess.check_call(cmd)
+        except subprocess.CalledProcessError:
+            self.logger.info("An error occurred while flashing the battery.")
+            return ExitCode.GENERIC_ERROR
+        # ---
         self.logger.info(f"Done!")
         return ExitCode.SUCCESS
 
