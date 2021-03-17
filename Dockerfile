@@ -1,9 +1,9 @@
 # parameters
-ARG REPO_NAME="<REPO_NAME_HERE>"
-ARG DESCRIPTION="<DESCRIPTION_HERE>"
-ARG MAINTAINER="<YOUR_FULL_NAME> (<YOUR_EMAIL_ADDRESS>)"
+ARG REPO_NAME="dt-firmware-upgrade"
+ARG DESCRIPTION="Runs on a Duckietown device to update components' firmware"
+ARG MAINTAINER="Andrea F. Daniele (afdaniele@ttic.edu)"
 # pick an icon from: https://fontawesome.com/v4.7.0/icons/
-ARG ICON="cube"
+ARG ICON="life-ring"
 
 # ==================================================>
 # ==> Do not change the code below this line
@@ -77,3 +77,13 @@ LABEL org.duckietown.label.module.type="${REPO_NAME}" \
     org.duckietown.label.maintainer="${MAINTAINER}"
 # <== Do not change the code above this line
 # <==================================================
+
+# copy binaries
+COPY ./assets/bin/${ARCH}/. /usr/local/bin/
+
+# copy duckiebattery drivers
+FROM duckietown/dt-device-health:${BASE_TAG} as dt-device-health
+FROM BASE
+COPY --from=dt-device-health \
+    "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \
+    "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \

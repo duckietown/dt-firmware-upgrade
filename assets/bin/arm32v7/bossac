@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "ERROR: BOSSAC is not supported on 'arm32v7' architecture."
+
+exit 1

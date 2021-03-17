@@ -1,1 +1,7 @@
 # LIST YOUR PYTHON3 PACKAGES HERE
+
+# used to test talk to the hardware
+pyserial
+
+# used to fetch new firmwares from the public space on DCSS
+requests

@@ -1,1 +1,4 @@
 # LIST YOUR APT PACKAGES HERE
+
+# provides command `lsusb`
+usbutils
