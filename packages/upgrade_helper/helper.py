@@ -127,7 +127,7 @@ class UpgradeHelper(DTProcess):
                 return ExitCode.GENERIC_ERROR
 
             # info is here
-            current_str = battery.info['firmware_version']
+            current_str = battery.info['version']
             current_int = int(re.sub("[^0-9]+", "", current_str))
             # print info and compare versions
             print(BATTERY_INFO.format(current=current_str, latest=latest_str))
