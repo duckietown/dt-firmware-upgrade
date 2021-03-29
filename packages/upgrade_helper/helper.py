@@ -1,3 +1,4 @@
+import os
 import re
 import subprocess
 import sys
@@ -63,14 +64,25 @@ class UpgradeHelper(DTProcess):
             self.logger.error("Battery not detected. Please, check the connection to the battery "
                               "and retry.")
             return ExitCode.HARDWARE_NOT_FOUND
-        # get latest version available
-        latest_int, latest_str = self._get_latest_battery_firmware_available()
-        if latest_int is None:
-            # something went wrong
-            self.logger.error("Error fetching the latest firmware version available "
-                              "from the internet. Exiting.")
-            return ExitCode.GENERIC_ERROR
-        self.logger.debug(f"Latest version fetched from the cloud is {latest_str}")
+        # pick version
+        if os.environ.get("FORCE_BATTERY_FW_VERSION", default=None) is not None:
+            latest_str = os.environ.get("FORCE_BATTERY_FW_VERSION", default=None)
+            try:
+                latest_int = int(re.sub("[^0-9]+", "", latest_str))
+            except ValueError:
+                # something went wrong
+                self.logger.error("Error parsing the given version string. Exiting.")
+                return ExitCode.GENERIC_ERROR
+            self.logger.info(f"Firmware version forced to {latest_str}")
+        else:
+            # get latest version available
+            latest_int, latest_str = self._get_latest_battery_firmware_available()
+            if latest_int is None:
+                # something went wrong
+                self.logger.error("Error fetching the latest firmware version available "
+                                  "from the internet. Exiting.")
+                return ExitCode.GENERIC_ERROR
+            self.logger.debug(f"Latest version fetched from the cloud is {latest_str}")
         # two cases:
         # - check = True: we want a battery in normal mode so that we can read the current version
         # - check = False: we want a battery in boot mode so that we can flash it
@@ -130,7 +142,7 @@ class UpgradeHelper(DTProcess):
             current_str = battery.info['version']
             current_int = int(re.sub("[^0-9]+", "", current_str))
             # print info and compare versions
-            print(BATTERY_INFO.format(current=current_str, latest=latest_str))
+            print(BATTERY_INFO.format(current=f"v{current_str}", latest=latest_str))
             return ExitCode.FIRMWARE_NEEDS_UPDATE if latest_int > current_int else \
                 ExitCode.FIRMWARE_UP_TO_DATE
 
