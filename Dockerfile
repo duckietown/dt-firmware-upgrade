@@ -86,4 +86,12 @@ FROM duckietown/dt-device-health:${BASE_TAG} as dt-device-health
 FROM BASE
 COPY --from=dt-device-health \
     "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \
-    "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \
+    "${SOURCE_DIR}/dt-device-health/packages/battery_drivers"
+
+COPY --from=dt-device-health \
+    "${SOURCE_DIR}/dt-device-health/dependencies-*" \
+    "${SOURCE_DIR}/dt-device-health/"
+
+# install APT and PIP3 dependencies from dt-device-health
+RUN dt-apt-install ${SOURCE_DIR}/dt-device-health/dependencies-apt.txt
+RUN pip3 install --use-feature=2020-resolver -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
