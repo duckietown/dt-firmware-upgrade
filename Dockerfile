@@ -14,7 +14,8 @@ ARG BASE_IMAGE=dt-commons
 ARG LAUNCHER=default
 
 # define base image
-FROM duckietown/${BASE_IMAGE}:${BASE_TAG} as BASE
+ARG DOCKER_REGISTRY=docker.io
+FROM ${DOCKER_REGISTRY}/duckietown/${BASE_IMAGE}:${BASE_TAG} as BASE
 
 # recall all arguments
 ARG ARCH
@@ -52,7 +53,10 @@ RUN dt-apt-install ${REPO_PATH}/dependencies-apt.txt
 
 # install python3 dependencies
 COPY ./dependencies-py3.txt "${REPO_PATH}/"
-RUN pip3 install --use-feature=2020-resolver -r ${REPO_PATH}/dependencies-py3.txt
+
+ARG PIP_INDEX_URL="https://pypi.org/simple"
+ENV PIP_INDEX_URL=${PIP_INDEX_URL}
+RUN pip3 install -r ${REPO_PATH}/dependencies-py3.txt
 
 # copy the source code
 COPY ./packages "${REPO_PATH}/packages"
@@ -82,7 +86,7 @@ LABEL org.duckietown.label.module.type="${REPO_NAME}" \
 COPY ./assets/bin/${ARCH}/. /usr/local/bin/
 
 # copy duckiebattery drivers
-FROM duckietown/dt-device-health:${BASE_TAG} as dt-device-health
+FROM ${DOCKER_REGISTRY}/duckietown/dt-device-health:${BASE_TAG} as dt-device-health
 FROM BASE
 COPY --from=dt-device-health \
     "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \
@@ -94,4 +98,4 @@ COPY --from=dt-device-health \
 
 # install APT and PIP3 dependencies from dt-device-health
 RUN dt-apt-install ${SOURCE_DIR}/dt-device-health/dependencies-apt.txt
-RUN pip3 install --use-feature=2020-resolver -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
+RUN pip3 install -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
