@@ -56,7 +56,7 @@ COPY ./dependencies-py3.txt "${REPO_PATH}/"
 
 ARG PIP_INDEX_URL="https://pypi.org/simple"
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
-RUN pip3 install -r ${REPO_PATH}/dependencies-py3.txt
+RUN python3 -m pip install -r ${REPO_PATH}/dependencies-py3.txt
 
 # copy the source code
 COPY ./packages "${REPO_PATH}/packages"
@@ -96,6 +96,6 @@ COPY --from=dt-device-health \
     "${SOURCE_DIR}/dt-device-health/dependencies-*" \
     "${SOURCE_DIR}/dt-device-health/"
 
-# install APT and PIP3 dependencies from dt-device-health
+# install APT and python3 -m pip dependencies from dt-device-health
 RUN dt-apt-install ${SOURCE_DIR}/dt-device-health/dependencies-apt.txt
-RUN pip3 install -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
+RUN python3 -m pip install -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
