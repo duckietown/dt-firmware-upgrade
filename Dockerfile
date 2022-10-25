@@ -15,7 +15,7 @@ ARG BASE_TAG=${DISTRO}-${ARCH}
 ARG LAUNCHER=default
 
 # define base image
-FROM ${DOCKER_REGISTRY}/duckietown/${BASE_IMAGE}:${BASE_TAG} as BASE
+FROM ${DOCKER_REGISTRY}/duckietown/${BASE_IMAGE}:${BASE_TAG} as base
 
 # recall all arguments
 ARG DISTRO
@@ -90,7 +90,7 @@ COPY ./assets/bin/${ARCH}/. /usr/local/bin/
 
 # copy duckiebattery drivers
 FROM ${DOCKER_REGISTRY}/duckietown/dt-device-health:${BASE_TAG} as dt-device-health
-FROM BASE
+FROM base
 COPY --from=dt-device-health \
     "${SOURCE_DIR}/dt-device-health/packages/battery_drivers" \
     "${SOURCE_DIR}/dt-device-health/packages/battery_drivers"
