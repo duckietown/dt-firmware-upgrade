@@ -101,4 +101,4 @@ COPY --from=dt-device-health \
 
 # install APT and python3 -m pip dependencies from dt-device-health
 RUN dt-apt-install ${SOURCE_DIR}/dt-device-health/dependencies-apt.txt
-RUN python3 -m pip install -r ${SOURCE_DIR}/dt-device-health/dependencies-py3.txt
+RUN dt-pip3-install "${SOURCE_DIR}/dt-device-health/dependencies-py3.*"
