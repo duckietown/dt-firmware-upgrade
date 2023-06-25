@@ -17,7 +17,7 @@ from battery_drivers.constants import BATTERY_PCB16_BOOT_VID, BATTERY_PCB16_BOOT
     BATTERY_PCB16_READY_VID, BATTERY_PCB16_READY_PID, BATTERY_PCB16_BAUD_RATE
 
 from . import __version__
-from .constants import ExitCode, BATTERY_FIRMWARE_URL
+from .constants import ExitCode, BATTERY_FIRMWARE_URL, LOCAL_FIRMWARE_BIN_PATH
 
 INFO = """
 Duckietown {hardware} Firmware Upgrade Utility.
@@ -49,12 +49,12 @@ class UpgradeHelper(DTProcess):
         sys.stdout.flush()
         # upgrade battery
         if parsed.battery:
-            return self.upgrade_battery(parsed.check, parsed.dry_run)
+            return self.upgrade_battery(parsed.check, parsed.dry_run, parsed.use_local_firmware)
         # upgrade hut
         if parsed.hut:
             return self.upgrade_hut(parsed.check, parsed.dry_run)
 
-    def upgrade_battery(self, check: bool = False, dryrun: bool = False) -> int:
+    def upgrade_battery(self, check: bool = False, dryrun: bool = False, use_local_firmware: bool = False) -> int:
         # battery needs to be in boot mode
         ready_devs = self._find_device(BATTERY_PCB16_READY_VID, BATTERY_PCB16_READY_PID)
         boot_devs = self._find_device(BATTERY_PCB16_BOOT_VID, BATTERY_PCB16_BOOT_PID)
@@ -162,19 +162,28 @@ class UpgradeHelper(DTProcess):
             self.logger.error("Battery detected but another process is using it. This should not "
                               "have happened. Contact the administrator.")
             return ExitCode.HARDWARE_BUSY
-        # download latest firmware
-        fw_filename = f"battery_pcb16_fw_v{latest_int}.bin"
-        fw_fpath = f"/tmp/{fw_filename}"
-        url = BATTERY_FIRMWARE_URL.format(pcb_version=16, resource=fw_filename)
-        self.logger.info(f"Downloading firmware version {latest_str}...")
-        with open(fw_fpath, "wb") as fout:
-            # noinspection PyBroadException
-            try:
-                fout.write(requests.get(url).content)
-            except BaseException as e:
-                self.logger.error(f"ERROR: {str(e)}")
+        if use_local_firmware:
+            self.logger.info(f"In local firmware testing mode, will NOT download firmware from server.")
+            # mounted repo path / preset firmware bin path
+            fw_fpath = os.path.join(os.environ.get("DT_REPO_PATH"), LOCAL_FIRMWARE_BIN_PATH)
+            if not (os.path.exists(fw_fpath) and os.path.isfile(fw_fpath)):
+                self.logger.info(f"Error! Local firmware binary NOT FOUND at: {fw_fpath}")
                 return ExitCode.GENERIC_ERROR
-        self.logger.info(f"Firmware downloaded!")
+        else:
+            # download latest firmware
+            fw_filename = f"battery_pcb16_fw_v{latest_int}.bin"
+            fw_fpath = f"/tmp/{fw_filename}"
+            url = BATTERY_FIRMWARE_URL.format(pcb_version=16, resource=fw_filename)
+            self.logger.info(f"Downloading firmware version {latest_str}...")
+            with open(fw_fpath, "wb") as fout:
+                # noinspection PyBroadException
+                try:
+                    fout.write(requests.get(url).content)
+                except BaseException as e:
+                    self.logger.error(f"ERROR: {str(e)}")
+                    return ExitCode.GENERIC_ERROR
+            self.logger.info("Firmware downloaded!")
+        self.logger.info(f"Using firmware file: {fw_fpath}")
         # everything should be ready to go
         device = boot_devs[0].split('/')[-1]
         self.logger.info(f"Flashing firmware to device {device}...")
