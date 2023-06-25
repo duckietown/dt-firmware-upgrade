@@ -6,6 +6,8 @@ BATTERY_PCB16_BOOT_MODE_PID = "0557"
 BATTERY_FIRMWARE_URL = "https://duckietown-public-storage.s3.amazonaws.com/assets/battery/" \
                        "PCBv{pcb_version}/firmware/{resource}"
 
+# see README file, section "Testing Local Firmware"
+LOCAL_FIRMWARE_BIN_PATH = "assets/firmware/fw.bin"
 
 class ExitCode(IntEnum):
     # This APP communicates the outcome of its actions using these exit codes.

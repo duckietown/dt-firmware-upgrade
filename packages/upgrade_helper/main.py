@@ -32,6 +32,12 @@ if __name__ == '__main__':
         default=False,
         help="Pretend you are doing stuff"
     )
+    parser.add_argument(
+        "--use-local-firmware",
+        action="store_true",
+        default=False,
+        help="Try to use the firmware at assets/firmware/fw.bin (to help fast testing with local firmware binaries)"
+    )
     parsed = parser.parse_args()
     # ---
     # run upgrade helper
