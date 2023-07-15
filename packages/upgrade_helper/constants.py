@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 BATTERY_PCB16_BOOT_MODE_VID = "16d0"
 BATTERY_PCB16_BOOT_MODE_PID = "0557"
@@ -19,3 +19,12 @@ class ExitCode(IntEnum):
     FIRMWARE_UP_TO_DATE = 5
     FIRMWARE_NEEDS_UPDATE = 6
     GENERIC_ERROR = 9
+
+# when running main.py with `--find-pcbid`, either return
+#   this: meaning failed to obtain a valid PCB version
+#   other int: the pcb version (e.g. PCBv1.6 => 16, PCBv2.1 => 21)
+PCB_VERSION_ID_EXIT_CODE_NONE = 0
+
+class BatteryMode(Enum):
+    READY = "ready"  # referred to as ready/normal mode
+    BOOT = "boot"
