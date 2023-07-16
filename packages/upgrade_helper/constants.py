@@ -1,10 +1,13 @@
 from enum import IntEnum, Enum
 
-BATTERY_PCB16_BOOT_MODE_VID = "16d0"
-BATTERY_PCB16_BOOT_MODE_PID = "0557"
+BATTERY_FIRMWARE_URL = (
+    "https://duckietown-public-storage.s3.amazonaws.com"
+    "/assets/battery/PCBv{pcb_version}/firmware/{resource}"
+) 
 
-BATTERY_FIRMWARE_URL = "https://duckietown-public-storage.s3.amazonaws.com/assets/battery/" \
-                       "PCBv{pcb_version}/firmware/{resource}"
+# in the helper, these env variables help configure some options
+ENV_KEY_FORCE_FW_VERSION = "FORCE_BATTERY_FW_VERSION"
+ENV_KEY_PCB_VERSION = "PCB_VERSION"
 
 # see README file, section "Testing Local Firmware"
 LOCAL_FIRMWARE_BIN_PATH = "assets/firmware/fw.bin"

@@ -28,6 +28,8 @@ from .constants import (
     BATTERY_FIRMWARE_URL,
     LOCAL_FIRMWARE_BIN_PATH,
     PCB_VERSION_ID_EXIT_CODE_NONE,
+    ENV_KEY_FORCE_FW_VERSION,
+    ENV_KEY_PCB_VERSION,
 )
 
 INFO = """
@@ -242,8 +244,8 @@ class UpgradeHelper(DTProcess):
         """
 
         # method 1
-        if os.environ.get("FORCE_BATTERY_FW_VERSION", default=None) is not None:
-            latest_str = os.environ.get("FORCE_BATTERY_FW_VERSION", default=None)
+        if os.environ.get(ENV_KEY_FORCE_FW_VERSION, default=None) is not None:
+            latest_str = os.environ.get(ENV_KEY_FORCE_FW_VERSION, default=None)
             try:
                 latest_int = int(re.sub("[^0-9]+", "", latest_str))
                 self.logger.info(f"Firmware version forced to {latest_str}")
@@ -265,8 +267,8 @@ class UpgradeHelper(DTProcess):
             return latest_int, latest_str
 
         # method 2.a
-        if os.environ.get("PCB_VERSION") is not None:
-            pcb_ver = int(os.environ.get("PCB_VERSION"))
+        if os.environ.get(ENV_KEY_PCB_VERSION) is not None:
+            pcb_ver = int(os.environ.get(ENV_KEY_PCB_VERSION))
             self.logger.info(f"PCB version supplied: {pcb_ver}")
             return fetch_lateset_fw(pcb_version=pcb_ver)
 
@@ -336,8 +338,8 @@ class UpgradeHelper(DTProcess):
                 return ExitCode.GENERIC_ERROR
         else:  # download latest firmware
             # the env variable PCB_VERSION has to be set
-            if os.environ.get("PCB_VERSION") is None:
-                self.logger.error("PCB_VERSION env variable not given. Abort.")
+            if os.environ.get(ENV_KEY_PCB_VERSION) is None:
+                self.logger.error(f"{ENV_KEY_PCB_VERSION} env variable not given. Abort.")
                 return ExitCode.GENERIC_ERROR
 
             res = self._battery_get_latest_firmware_version()
@@ -345,7 +347,7 @@ class UpgradeHelper(DTProcess):
                 return res
             latest_int, latest_str = res
 
-            pcb_ver = int(os.environ.get("PCB_VERSION"))
+            pcb_ver = int(os.environ.get(ENV_KEY_PCB_VERSION))
             fw_filename = f"battery_pcb{pcb_ver}_fw_v{latest_int}.bin"
             fw_fpath = f"/tmp/{fw_filename}"
             url = BATTERY_FIRMWARE_URL.format(pcb_version=pcb_ver, resource=fw_filename)
