@@ -69,8 +69,6 @@ class UpgradeHelper(DTProcess):
                 return self.battery_check_firmware_up_to_date()
             # try to flash firmware
             return self.upgrade_battery(
-                parsed.find_pcbid,
-                parsed.check,
                 parsed.dry_run,
                 parsed.use_local_firmware,
             )
