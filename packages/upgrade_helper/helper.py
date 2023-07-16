@@ -253,7 +253,7 @@ class UpgradeHelper(DTProcess):
                 self.logger.error("Error parsing the given version string. Exiting.")
                 return ExitCode.GENERIC_ERROR
 
-        def fetch_lateset_fw(pcb_version: int):
+        def fetch_latest_fw(pcb_version: int):
             # get latest version available for a particular pcb version
             latest_int, latest_str = self._get_latest_battery_firmware_available_for_pcb(pcb_version=pcb_version)
             if latest_int is None:
@@ -268,7 +268,7 @@ class UpgradeHelper(DTProcess):
         if os.environ.get(ENV_KEY_PCB_VERSION) is not None:
             pcb_ver = int(os.environ.get(ENV_KEY_PCB_VERSION))
             self.logger.info(f"PCB version supplied: {pcb_ver}")
-            return fetch_lateset_fw(pcb_version=pcb_ver)
+            return fetch_latest_fw(pcb_version=pcb_ver)
 
         # method 2.b
         res = self.battery_find_pcb_version()
@@ -276,7 +276,7 @@ class UpgradeHelper(DTProcess):
             self.logger.error("Cannot read battery PCB version")
             return ExitCode.GENERIC_ERROR
         self.logger.info(f"PCB version read: {res}")
-        return fetch_lateset_fw(pcb_version=res)
+        return fetch_latest_fw(pcb_version=res)
 
     def battery_check_firmware_up_to_date(self) -> int:
         """Check if battery firmware is up-to-date
