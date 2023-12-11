@@ -41,20 +41,29 @@ ask_compare_and_confirm() {
 
 
 # install dependencies
+echo "[Installing dependencies]"
 sudo apt-get update
-sudo apt-get install bison autoconf flex gcc-avr binutils-avr gdb-avr avr-libc avrdude build-essential
+sudo apt-get -y install bison autoconf flex gcc-avr binutils-avr gdb-avr avr-libc avrdude build-essential
 
+echo
+echo "[Cloning github.com/duckietown/fw-device-hut]"
 # clone repo
 git clone --branch main https://github.com/duckietown/fw-device-hut.git $HOME/fw-device-hut
 cd $HOME/fw-device-hut
 
+echo
+echo "[Copying configuration file]"
 # read robot hardware (JETSON vs. RPI), and copy files
 if [ "${ROBOT_HARDWARE}" == "jetson_nano" ]; then
     sudo cp _avrdudeconfig_jetson_nano/avrdude.conf /etc/avrdude.conf
+    echo "Configuration file copied for Jetson Nano"
 else # RPi
     sudo cp _avrdudeconfig_raspberry_pi/avrdude.conf /etc/avrdude.conf
+    echo "Configuration file copied for RaspberryPi"
 fi
 
+echo
+echo "[make fuses]"
 # test the avrdude and set the low-level configuration
 make fuses
 
@@ -70,9 +79,10 @@ avrdude done.  Thank you.
 "
 ask_compare_and_confirm
 
+echo
+echo "[make clean && make]"
 # remove temporary files
 make clean
-
 # compile the firmware and flash to the HUT micro-controller
 make
 
@@ -80,7 +90,7 @@ make
 util_separator
 echo "
 avrdude: verifying ...
-avrdude: 2220 bytes of flash verified
+avrdude: 2832 bytes of flash verified
 
 avrdude: safemode: Fuses OK (E:FF, H:DF, L:E2)
 
