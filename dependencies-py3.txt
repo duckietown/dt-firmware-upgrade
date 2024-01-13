@@ -2,7 +2,7 @@
 # NOTE: only place non-Duckietown libraries here; pin versions only if necessary
 
 # used to test talk to the hardware
-pyserial
+pyserial==3.5
 
 # used to fetch new firmwares from the public space on DCSS
-requests
+requests==2.31.0
