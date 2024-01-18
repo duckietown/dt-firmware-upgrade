@@ -5,22 +5,21 @@ import sys
 import time
 import traceback
 from threading import Thread
-from typing import List, Optional, Tuple, Union, Dict
+from typing import List, Optional, Tuple, Union
 
 import requests
 import serial
+from dt_class_utils import DTProcess
 from serial.tools.list_ports import grep as serial_grep
 
 from battery_drivers import Battery
-from dt_class_utils import DTProcess
 from battery_drivers.constants import (
-    BATTERY_PCB_BOOT_VID,
-    BATTERY_PCB_BOOT_PID,
-    BATTERY_PCB_READY_VID,
-    BATTERY_PCB_READY_PID,
-    BATTERY_PCB_BAUD_RATE,
+    BATTERY_PCB16_BOOT_VID as BATTERY_PCB_BOOT_VID,
+    BATTERY_PCB16_BOOT_PID as BATTERY_PCB_BOOT_PID,
+    BATTERY_PCB16_READY_VID as BATTERY_PCB_READY_VID,
+    BATTERY_PCB16_READY_PID as BATTERY_PCB_READY_PID,
+    BATTERY_PCB16_BAUD_RATE as BATTERY_PCB_BAUD_RATE,
 )
-
 from . import __version__
 from .constants import (
     ExitCode,
