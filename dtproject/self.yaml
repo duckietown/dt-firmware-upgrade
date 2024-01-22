@@ -1,0 +1,8 @@
+name: "dt-firmware-upgrade"
+maintainer:
+    name: "Andrea F. Daniele"
+    email: "afdaniele@duckietown.com"
+description: "Runs on a Duckietown device to update components' firmware"
+version: 0.0.1
+# pick an icon from: https://fontawesome.com/v4.7.0/icons/
+icon: life-ring
