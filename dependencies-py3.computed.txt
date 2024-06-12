@@ -1,0 +1,5 @@
+distro==1.9.0
+jetson-stats==4.2.8
+semver==3.0.2
+smbus2==0.4.3
+xxhash==3.4.1
