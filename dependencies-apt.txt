@@ -2,3 +2,14 @@
 
 # provides command `lsusb`
 usbutils
+
+# needed by the hut flashing procedure
+bison
+autoconf
+flex
+gcc-avr
+binutils-avr
+gdb-avr
+avr-libc
+avrdude
+build-essential

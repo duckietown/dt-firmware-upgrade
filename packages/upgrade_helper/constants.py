@@ -1,10 +1,13 @@
-from enum import IntEnum
+from enum import IntEnum, Enum
 
-BATTERY_PCB16_BOOT_MODE_VID = "16d0"
-BATTERY_PCB16_BOOT_MODE_PID = "0557"
+BATTERY_FIRMWARE_URL = (
+    "https://duckietown-public-storage.s3.amazonaws.com"
+    "/assets/battery/PCBv{pcb_version}/firmware/{resource}"
+) 
 
-BATTERY_FIRMWARE_URL = "https://duckietown-public-storage.s3.amazonaws.com/assets/battery/" \
-                       "PCBv{pcb_version}/firmware/{resource}"
+# in the helper, these env variables help configure some options
+ENV_KEY_FORCE_FW_VERSION = "FORCE_BATTERY_FW_VERSION"
+ENV_KEY_PCB_VERSION = "PCB_VERSION"
 
 # see README file, section "Testing Local Firmware"
 LOCAL_FIRMWARE_BIN_PATH = "assets/firmware/fw.bin"
@@ -19,3 +22,12 @@ class ExitCode(IntEnum):
     FIRMWARE_UP_TO_DATE = 5
     FIRMWARE_NEEDS_UPDATE = 6
     GENERIC_ERROR = 9
+
+# when running main.py with `--find-pcbid`, either return
+#   this: meaning failed to obtain a valid PCB version
+#   other int: the pcb version (e.g. PCBv1.6 => 16, PCBv2.1 => 21)
+PCB_VERSION_ID_EXIT_CODE_NONE = 0
+
+class BatteryMode(Enum):
+    READY = "ready"  # referred to as ready/normal mode
+    BOOT = "boot"
