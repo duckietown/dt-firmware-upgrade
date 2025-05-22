@@ -149,7 +149,7 @@ class UpgradeHelper(DTProcess):
 
         def watchdog_fcn():
             timeout, elapsed, step = 10, 0, 0.5
-            while not (self.is_shutdown() or battery.is_shutdown()) and battery.info is None:
+            while not (self.is_shutdown or battery.is_shutdown()) and battery.info is None:
                 if elapsed > timeout:
                     break
                 time.sleep(step)
