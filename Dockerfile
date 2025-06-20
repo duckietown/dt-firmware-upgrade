@@ -133,3 +133,6 @@ COPY --from=dt-device-health \
 # install APT and python3 -m pip dependencies from dt-device-health
 RUN dt-apt-install ${SOURCE_DIR}/dt-device-health/dependencies-apt.txt
 RUN dt-pip3-install "${SOURCE_DIR}/dt-device-health/dependencies-py3.*"
+
+# clone fw-device-hut
+RUN git clone https://github.com/duckietown/fw-device-hut.git
